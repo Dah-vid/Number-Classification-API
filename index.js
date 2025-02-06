@@ -56,19 +56,21 @@ function isArmstrong(num) {
 // Function to get number properties
 function getNumberProperties(num) {
     const properties = [];
+    const isArmstrongNum = isArmstrong(num);
+    const isOdd = num % 2 !== 0;
     
-    // Check if odd or even
-    if (num % 2 === 0) {
-        properties.push('even');
-    } else {
-        properties.push('odd');
-    }
-    
-    // Check if Armstrong
+     // Check if Armstrong
     if (isArmstrong(num)) {
         properties.push('armstrong');
     }
     
+    // Check if odd or even
+    if (isOdd) {
+        properties.push('odd');
+    } else {
+        properties.push('even');
+    }
+
     return properties;
 }
 
