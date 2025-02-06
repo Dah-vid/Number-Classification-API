@@ -1,14 +1,9 @@
-# fly.toml app configuration file generated for number-classification-api-gp0i7w on 2025-02-06T18:11:02Z
+# fly.toml app configuration file generated for number-classification-api-zxvvkg on 2025-02-06T18:54:30Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-# fly.toml app configuration file generated for number-classification-api-gp0i7w on 2025-02-06T18:11:02Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'number-classification-api-gp0i7w'
+app = 'number-classification-api-zxvvkg'
 primary_region = 'lhr'
 
 [build]
