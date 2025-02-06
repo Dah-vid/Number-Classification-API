@@ -84,35 +84,39 @@ function calculateDigitSum(num) {
 // Function to get a fun fact about a number
 async function getNumberFact(num) {
     try {
-        const response = await axios.get(`http://numbersapi.com/${num}/math`);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 2000);
+
+        const response = await axios.get(`http://numbersapi.com/${num}/math`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeout);
         return response.data;
     } catch (error) {
-        // Fallback if API is unavailable
         if (isArmstrong(num)) {
             const digits = String(num).split('');
             const power = digits.length;
-            const calculation = digits
-                .map(d => `${d}^${power}`)
-                .join(' + ');
-            return `${num} is an Armstrong number because ${calculation} = ${num}`;
+            return `${num} is an Armstrong number because ${digits.map(d => `${d}^${power}`).join(' + ')} = ${num}`;
         }
         return `${num} is an interesting number with various mathematical properties.`;
     }
 }
-
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
 // Main API endpoint
 app.get('/api/classify-number', async (req, res) => {
-    // Get the number from query parameters
     const numberStr = req.query.number;
     
-    // Check if input is valid
-    if (!numberStr || isNaN(numberStr)) {
+    // Validate input: must be a valid integer
+    if (!numberStr || isNaN(numberStr) || !Number.isInteger(Number(numberStr))) {
         return res.status(400).json({
             number: numberStr,
             error: true
         });
     }
-    
     // Convert string to number
     const number = parseInt(numberStr);
     
@@ -129,17 +133,15 @@ app.get('/api/classify-number', async (req, res) => {
             digit_sum: calculateDigitSum(number),
             fun_fact: funFact
         });
-    } catch (error) {
-        // Handle any errors
-        res.status(500).json({
+   } catch (error) {
+        res.status(400).json({
             number: numberStr,
-            error: true,
-            message: 'Internal server error'
+            error: true
         });
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
