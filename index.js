@@ -1,15 +1,26 @@
-// 1. First, import required packages
+// First, import required packages
 const express = require('express');  // Web framework
 const cors = require('cors');        // For handling CORS
 const axios = require('axios');      // For making HTTP requests
 
-// 2. Create Express application
+// Create Express application
 const app = express();
 
-// 3. Enable CORS for all origins (for development)
+// Enable CORS for all origins (for development)
 app.use(cors());
 
-// 4. Function to check if a number is prime
+//Root to show API is working
+app.get('/', (req, res) => {
+    res.json({
+        message: "Welcome to the Number Classification API",
+        usage: {
+            endpoint: "/api/classify-number",
+            example: "/api/classify-number?number=371"
+        }
+    });
+});
+
+// Function to check if a number is prime
 function isPrime(num) {
     if (num <= 1) return false;
     if (num === 2) return true;
@@ -21,7 +32,7 @@ function isPrime(num) {
     return true;
 }
 
-// 5. Function to check if a number is perfect
+// Function to check if a number is perfect
 function isPerfect(num) {
     if (num < 2) return false;
     let sum = 1;
@@ -33,7 +44,7 @@ function isPerfect(num) {
     return sum === num;
 }
 
-// 6. Function to check if a number is Armstrong
+// Function to check if a number is Armstrong
 function isArmstrong(num) {
     const digits = String(num).split('');
     const power = digits.length;
@@ -42,7 +53,7 @@ function isArmstrong(num) {
     return sum === num;
 }
 
-// 7. Function to get number properties
+// Function to get number properties
 function getNumberProperties(num) {
     const properties = [];
     
@@ -61,14 +72,14 @@ function getNumberProperties(num) {
     return properties;
 }
 
-// 8. Function to calculate digit sum
+// Function to calculate digit sum
 function calculateDigitSum(num) {
     return String(Math.abs(num))
         .split('')
         .reduce((sum, digit) => sum + parseInt(digit), 0);
 }
 
-// 9. Function to get a fun fact about a number
+// Function to get a fun fact about a number
 async function getNumberFact(num) {
     try {
         const response = await axios.get(`http://numbersapi.com/${num}/math`);
@@ -87,12 +98,12 @@ async function getNumberFact(num) {
     }
 }
 
-// 10. Main API endpoint
+// Main API endpoint
 app.get('/api/classify-number', async (req, res) => {
-    // 11. Get the number from query parameters
+    // Get the number from query parameters
     const numberStr = req.query.number;
     
-    // 12. Check if input is valid
+    // Check if input is valid
     if (!numberStr || isNaN(numberStr)) {
         return res.status(400).json({
             number: numberStr,
@@ -100,14 +111,14 @@ app.get('/api/classify-number', async (req, res) => {
         });
     }
     
-    // 13. Convert string to number
+    // Convert string to number
     const number = parseInt(numberStr);
     
     try {
-        // 14. Get fun fact about the number
+        // Get fun fact about the number
         const funFact = await getNumberFact(number);
         
-        // 15. Prepare and send response
+        // Prepare and send response
         res.json({
             number: number,
             is_prime: isPrime(number),
@@ -117,7 +128,7 @@ app.get('/api/classify-number', async (req, res) => {
             fun_fact: funFact
         });
     } catch (error) {
-        // 16. Handle any errors
+        // Handle any errors
         res.status(500).json({
             number: numberStr,
             error: true,
@@ -126,7 +137,6 @@ app.get('/api/classify-number', async (req, res) => {
     }
 });
 
-// 17. Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
